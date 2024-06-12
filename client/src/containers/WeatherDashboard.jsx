@@ -44,6 +44,10 @@ function WeatherDashboard() {
 	const [weatherData, setWeatherData] = useState({});
 	const [email, setEmail] = useState("");
 	const [history, setHistory] = useState([]);
+	const [showLoadMore, setShowLoadMore] = useState(true);
+	const [forecastDaysToShow, setForecastDaysToShow] = useState(4);
+	// State to control showing load more button
+
 	const Toast = useToast();
 	useEffect(() => {
 		const fetchData = async () => {
@@ -65,7 +69,7 @@ function WeatherDashboard() {
 		const fetchData = async () => {
 			try {
 				const response = await axiosInstance.get(
-					`${api}/forecast?city=id%3A${selectedCity}`
+					`${api}/forecast?city=id%3A${selectedCity}&day=${forecastDaysToShow}`
 				);
 				const data = response.data;
 				setWeatherData(data);
@@ -75,7 +79,7 @@ function WeatherDashboard() {
 			}
 		};
 		if (selectedCity) fetchData();
-	}, [selectedCity]);
+	}, [selectedCity, forecastDaysToShow]);
 
 	useEffect(() => {
 		if (isUsingCurrentLocation) {
@@ -161,6 +165,13 @@ function WeatherDashboard() {
 		const newHistory = [data, ...history];
 		setHistory(newHistory);
 		localStorage.setItem("weatherHistory", JSON.stringify(newHistory));
+	};
+
+	const handleLoadMore = () => {
+		setForecastDaysToShow(Math.min(forecastDaysToShow + 4, 14));
+		if (forecastDaysToShow >= 14) {
+			setShowLoadMore(false);
+		}
 	};
 
 	return (
@@ -318,9 +329,12 @@ function WeatherDashboard() {
 								</Flex>
 							</Box>
 							<Text fontSize="lg" fontWeight="bold" mb={2}>
-								4-Day Forecast
+								{`${forecastDaysToShow}-Day Forecast`}
 							</Text>
-							<Grid templateColumns="repeat(4, 1fr)" gap={4}>
+							<Grid
+								templateColumns="repeat(4, 1fr)"
+								gap={forecastDaysToShow >= 4 ? 4 : 0}
+							>
 								{weatherData.forecast.map((forecast, index) => (
 									<GridItem
 										key={index}
@@ -345,6 +359,15 @@ function WeatherDashboard() {
 									</GridItem>
 								))}
 							</Grid>
+							{showLoadMore && (
+								<Button
+									mt={4}
+									colorScheme="blue"
+									onClick={handleLoadMore}
+								>
+									Load More
+								</Button>
+							)}
 							<Box mt={8}>
 								<FormControl>
 									<FormLabel>Subscribe for updates</FormLabel>

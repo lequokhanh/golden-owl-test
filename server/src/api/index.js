@@ -34,9 +34,9 @@ router.get("/city", async (req, res) => {
 });
 
 router.get("/forecast", async (req, res) => {
-	const { city } = req.query;
+	const { city, day } = req.query;
 	const response = await fetch(
-		`https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=${city}&days=4`
+		`https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=${city}&days=${day}`
 	);
 	const data = await response.json();
 	const { forecastday } = data.forecast;
