@@ -35,7 +35,7 @@ const sendEmail = async (to, subject, text, html) => {
 
 const sendComfirmationEmail = async (email, city) => {
 	const subject = "Subscription Confirmation";
-	const text = `You have successfully subscribed to weather updates for ${city}.`;
+	const text = `You have successfully subscribed to weather updates for ${city}. You will receive daily weather updates at 8:00 AM.`;
 	await sendEmail(email, subject, text);
 };
 
