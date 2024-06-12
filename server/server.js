@@ -18,10 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
 	cors({
-		origin: [
-			"http://localhost:5173",
-			"https://golden-owl-test-xqui-hqf5uvqn5-lequos-projects.vercel.app",
-		],
+		origin: "*",
 	})
 );
 
