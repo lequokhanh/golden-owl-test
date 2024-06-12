@@ -46,6 +46,7 @@ function WeatherDashboard() {
 	const [history, setHistory] = useState([]);
 	const [showLoadMore, setShowLoadMore] = useState(true);
 	const [forecastDaysToShow, setForecastDaysToShow] = useState(4);
+	const [isNeedToForecast, setIsNeedToForecast] = useState(true);
 	// State to control showing load more button
 
 	const Toast = useToast();
@@ -78,7 +79,7 @@ function WeatherDashboard() {
 				console.error("Error fetching current weather:", error);
 			}
 		};
-		if (selectedCity) fetchData();
+		if (selectedCity && isNeedToForecast) fetchData();
 		if (forecastDaysToShow === 14) setShowLoadMore(false);
 		else setShowLoadMore(true);
 	}, [selectedCity, forecastDaysToShow]);
@@ -106,6 +107,7 @@ function WeatherDashboard() {
 					`${api}/city?city=${position.latitude},${position.longitude}`
 				);
 				const data = response.data;
+				setIsNeedToForecast(true);
 				setSelectedCity(data[0].id);
 				setForecastDaysToShow(4);
 			} catch (error) {
@@ -220,6 +222,7 @@ function WeatherDashboard() {
 										label={city.name}
 										textTransform="capitalize"
 										onClick={() => {
+											setIsNeedToForecast(true);
 											setSelectedCity(city.id);
 											setForecastDaysToShow(4);
 										}}
@@ -277,6 +280,8 @@ function WeatherDashboard() {
 											setForecastDaysToShow(
 												item.forecast.length
 											);
+											setIsNeedToForecast(false);
+											setSelectedCity(item.city);
 										}}
 									>
 										<Text fontWeight="bold">
@@ -344,10 +349,7 @@ function WeatherDashboard() {
 							<Text fontSize="lg" fontWeight="bold" mb={2}>
 								{`${forecastDaysToShow}-Day Forecast`}
 							</Text>
-							<Grid
-								templateColumns="repeat(4, 1fr)"
-								gap={forecastDaysToShow >= 4 ? 4 : 0}
-							>
+							<Grid templateColumns="repeat(4, 1fr)" gap={[3, 4]}>
 								{weatherData.forecast.map((forecast, index) => (
 									<GridItem
 										key={index}
