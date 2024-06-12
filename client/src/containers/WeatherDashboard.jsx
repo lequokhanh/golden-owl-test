@@ -22,6 +22,15 @@ import {
 	AutoCompleteList,
 } from "@choc-ui/chakra-autocomplete";
 import axios from "axios";
+const api = "https://golden-owl-test-backend.vercel.app/api";
+const headers = {
+	"Content-Type": "application/json",
+	"Access-Control-Allow-Origin": "*", // allow CORS
+};
+const axiosInstance = axios.create({
+	baseURL: api,
+	headers,
+});
 
 function WeatherDashboard() {
 	const [cities, setCities] = useState([]);
@@ -40,8 +49,8 @@ function WeatherDashboard() {
 		const fetchData = async () => {
 			setCities([]);
 			try {
-				const response = await axios.get(
-					`http://localhost:3000/api/city?city=${input || "%20"}`
+				const response = await axiosInstance.get(
+					`${api}/city?city=${input || "%20"}`
 				);
 				const data = response.data;
 				setCities(data);
@@ -55,8 +64,8 @@ function WeatherDashboard() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
-					`http://localhost:3000/api/forecast?city=id%3A${selectedCity}`
+				const response = await axiosInstance.get(
+					`${api}/forecast?city=id%3A${selectedCity}`
 				);
 				const data = response.data;
 				setWeatherData(data);
@@ -87,8 +96,8 @@ function WeatherDashboard() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(
-					`http://localhost:3000/api/city?city=${position.latitude},${position.longitude}`
+				const response = await axiosInstance.get(
+					`${api}/city?city=${position.latitude},${position.longitude}`
 				);
 				const data = response.data;
 				setSelectedCity(data[0].id);
@@ -119,13 +128,10 @@ function WeatherDashboard() {
 				});
 				return;
 			}
-			const response = await axios.post(
-				`http://localhost:3000/api/subscribe`,
-				{
-					email,
-					city: selectedCity,
-				}
-			);
+			const response = await axios.post(`${api}/subscribe`, {
+				email,
+				city: selectedCity,
+			});
 			if (response.status === 200) {
 				Toast({
 					title: "Subscription successful",
