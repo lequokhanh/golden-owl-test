@@ -79,6 +79,8 @@ function WeatherDashboard() {
 			}
 		};
 		if (selectedCity) fetchData();
+		if (forecastDaysToShow === 14) setShowLoadMore(false);
+		else setShowLoadMore(true);
 	}, [selectedCity, forecastDaysToShow]);
 
 	useEffect(() => {
@@ -105,6 +107,7 @@ function WeatherDashboard() {
 				);
 				const data = response.data;
 				setSelectedCity(data[0].id);
+				setForecastDaysToShow(4);
 			} catch (error) {
 				console.error("Error fetching current weather:", error);
 			}
@@ -159,19 +162,21 @@ function WeatherDashboard() {
 	};
 
 	const addToHistory = (data) => {
+		let newHistory = [];
 		if (history.some((item) => item.city === data.city)) {
-			return;
+			// replace existing item in history
+			newHistory = history.map((item) =>
+				item.city === data.city ? data : item
+			);
+		} else {
+			newHistory = [data, ...history];
 		}
-		const newHistory = [data, ...history];
 		setHistory(newHistory);
 		localStorage.setItem("weatherHistory", JSON.stringify(newHistory));
 	};
 
 	const handleLoadMore = () => {
 		setForecastDaysToShow(Math.min(forecastDaysToShow + 4, 14));
-		if (forecastDaysToShow >= 14) {
-			setShowLoadMore(false);
-		}
 	};
 
 	return (
@@ -214,7 +219,10 @@ function WeatherDashboard() {
 										value={city.id}
 										label={city.name}
 										textTransform="capitalize"
-										onClick={() => setSelectedCity(city.id)}
+										onClick={() => {
+											setSelectedCity(city.id);
+											setForecastDaysToShow(4);
+										}}
 									>
 										{city.name}
 									</AutoCompleteItem>
@@ -264,7 +272,12 @@ function WeatherDashboard() {
 										bg={"#fff"}
 										borderRadius="md"
 										cursor={"pointer"}
-										onClick={() => setWeatherData(item)}
+										onClick={() => {
+											setWeatherData(item);
+											setForecastDaysToShow(
+												item.forecast.length
+											);
+										}}
 									>
 										<Text fontWeight="bold">
 											{item.city} ({item.date})
