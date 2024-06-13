@@ -144,7 +144,7 @@ const sendWeatherUpdate = async (email, data) => {
         </div>
     </body>
     </html>`;
-	await sendEmail(email, subject, text, html);
+	await sendEmail(email, subject, "", html);
 };
 
 module.exports = { sendComfirmationEmail, sendWeatherUpdate };
