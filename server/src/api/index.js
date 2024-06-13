@@ -5,6 +5,8 @@ const {
 	sendComfirmationEmail,
 	sendWeatherUpdate,
 } = require("../common/SendEmail");
+const dotenv = require("dotenv");
+dotenv.config();
 const fetch = (...args) =>
 	import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
@@ -94,39 +96,35 @@ router.get("/unsubscribe", async (req, res) => {
 	}
 });
 
+router.post("/sendEmailUpdate", async (req, res) => {
+	const { email, data } = req.body;
+	try {
+		console.log(email, data.city);
+		await sendWeatherUpdate(email, data);
+		res.json({ message: "Email sent" });
+	} catch (error) {
+		res.status(400).json({ message: error.message });
+	}
+});
+
 router.get("/cron", async (_req, res) => {
 	User.find()
 		.then(async (users) => {
 			await users.forEach(async (user) => {
-				console.log(user.email, user.city);
 				const response = await fetch(
-					`https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=id:${user.city}&days=4`
+					`${process.env.URL}/api/forecast?city=${user.city}&day=4`
 				);
-				console.log(response);
 				const data = await response.json();
-				console.log(data);
-				const { forecastday } = data.forecast;
-				const forecast = forecastday.map((day) => {
-					return {
-						date: day.date,
-						temperature: day.day.avgtemp_c,
-						wind: day.day.maxwind_kph,
-						humidity: day.day.avghumidity,
-						icon: day.day.condition.icon,
-					};
+				await fetch(`${process.env.URL}/api/sendEmailUpdate`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						email: user.email,
+						data,
+					}),
 				});
-				const dataFormatted = {
-					city: data.location.name,
-					temperature: data.current.temp_c,
-					condition: data.current.condition.text,
-					icon: data.current.condition.icon,
-					wind: data.current.wind_kph,
-					humidity: data.current.humidity,
-					date: data.current.last_updated,
-					forecast,
-				};
-				console.log(dataFormatted);
-				await sendWeatherUpdate(user.email, dataFormatted);
 			});
 		})
 		.then(() => {
