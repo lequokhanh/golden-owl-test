@@ -38,4 +38,4 @@ const sendmail = async (req, res) => {
 	});
 };
 
-module.exports = sendmail;
+export default sendmail;
