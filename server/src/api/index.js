@@ -97,7 +97,7 @@ router.get("/unsubscribe", async (req, res) => {
 router.get("/cron", async (_req, res) => {
 	User.find()
 		.then(async (users) => {
-			users.forEach(async (user) => {
+			await users.forEach(async (user) => {
 				console.log(user.email, user.city);
 				const response = await fetch(
 					`https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=id:${user.city}&days=4`
