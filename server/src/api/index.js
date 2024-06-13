@@ -112,10 +112,10 @@ router.get("/cron", async (_req, res) => {
 		.then(async (users) => {
 			await users.forEach(async (user) => {
 				const response = await fetch(
-					`${process.env.URL}/api/forecast?city=${user.city}&day=4`
+					`${process.env.URL}/forecast?city=id:${user.city}&day=4`
 				);
 				const data = await response.json();
-				await fetch(`${process.env.URL}/api/sendEmailUpdate`, {
+				await fetch(`${process.env.URL}/sendEmailUpdate`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
