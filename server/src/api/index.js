@@ -123,8 +123,8 @@ router.get("/cron", async (req, res) => {
 				forecast,
 			};
 			sendWeatherUpdate(user.email, dataFormatted);
-			res.json({ message: "Email sent" });
 		});
+		res.json({ message: "Email sent" });
 	} catch (error) {
 		console.log(error);
 	}
