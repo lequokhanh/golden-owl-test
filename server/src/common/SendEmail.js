@@ -40,9 +40,9 @@ const sendComfirmationEmail = async (email, city) => {
 };
 
 const sendWeatherUpdate = async (email, data) => {
+	console.log("Sending weather update to:", email);
 	const token = jwt.sign({ email }, process.env.JWT_SECRET);
 	const subject = "Weather Update";
-	const text = `The current temperature in ${data.city} is ${data.temperature}°C with ${data.condition}.`;
 	const html = `<!DOCTYPE html>
     <html lang="en">
     <head>
