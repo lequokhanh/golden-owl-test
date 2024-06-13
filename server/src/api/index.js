@@ -94,7 +94,7 @@ router.get("/unsubscribe", async (req, res) => {
 	}
 });
 
-router.get("/cron", async (req, res) => {
+router.get("/cron", async (_req, res) => {
 	User.find()
 		.then(async (users) => {
 			users.forEach(async (user) => {
@@ -102,7 +102,9 @@ router.get("/cron", async (req, res) => {
 				const response = await fetch(
 					`https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=id:${user.city}&days=4`
 				);
+				console.log(response);
 				const data = await response.json();
+				console.log(data);
 				const { forecastday } = data.forecast;
 				const forecast = forecastday.map((day) => {
 					return {
@@ -123,6 +125,7 @@ router.get("/cron", async (req, res) => {
 					date: data.current.last_updated,
 					forecast,
 				};
+				console.log(dataFormatted);
 				await sendWeatherUpdate(user.email, dataFormatted);
 			});
 		})
