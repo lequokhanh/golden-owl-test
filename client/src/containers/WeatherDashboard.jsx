@@ -183,37 +183,79 @@ function WeatherDashboard() {
 
 	return (
 		<>
-			<Box bg="#5372f0" p={6} alignContent={"center"}>
+			<Box 
+				bgGradient="linear(135deg, #667eea 0%, #764ba2 100%)"
+				p={8} 
+				alignContent={"center"}
+				position="relative"
+				overflow="hidden"
+			>
 				<Text
-					fontSize="2xl"
-					fontWeight="bold"
-					mb={4}
+					fontSize={["3xl", "4xl"]}
+					fontWeight="800"
 					align={"center"}
-					color={"#fff"}
+					color={"white"}
+					textShadow="0 2px 4px rgba(0,0,0,0.3)"
+					letterSpacing="wide"
 				>
-					Weather Dashboard
+					🌤️ Weather Dashboard
 				</Text>
 			</Box>
 			<Flex
 				w="full"
 				justifyContent="center"
 				flexDir={["column", "row"]}
-				bg="#e3f2fd"
+				bgGradient="linear(to-br, #f7fafc, #edf2f7)"
+				minH="100vh"
+				p={4}
 			>
-				<Flex mt={10} ml={5} mr={5} flexDir={"column"}>
-					<FormControl w="full">
-						<FormLabel>Enter a City Name</FormLabel>
+				<Box
+					bg="white"
+					borderRadius="2xl"
+					boxShadow="xl"
+					p={8}
+					m={[4, 6]}
+					maxW={["full", "400px"]}
+					border="1px solid"
+					borderColor="gray.100"
+				>
+					<FormControl w="full" mb={6}>
+						<FormLabel 
+							fontSize="lg" 
+							fontWeight="600"
+							color="gray.700"
+							mb={3}
+						>
+							🌍 Enter a City Name
+						</FormLabel>
 						<AutoComplete openOnFocus>
 							<AutoCompleteInput
-								bg={"#fff"}
-								variant={"filled"}
+								bg="gray.50"
+								variant="filled"
 								placeholder="E.g., New York, London, Tokyo"
+								fontSize="md"
+								borderRadius="lg"
+								border="2px solid transparent"
+								_hover={{
+									bg: "gray.100",
+									borderColor: "blue.300"
+								}}
+								_focus={{
+									bg: "white",
+									borderColor: "blue.500",
+									boxShadow: "0 0 0 3px rgba(66, 153, 225, 0.1)"
+								}}
 								onChange={(e) => setInput(e.target.value)}
 							/>
 							<AutoCompleteList
 								loadingState={
-									cities.length === 0 ? <Spinner /> : null
+									cities.length === 0 ? <Spinner color="blue.500" size="md" /> : null
 								}
+								bg="white"
+								border="1px solid"
+								borderColor="gray.200"
+								borderRadius="lg"
+								boxShadow="lg"
 							>
 								{cities.map((city, cid) => (
 									<AutoCompleteItem
@@ -221,6 +263,10 @@ function WeatherDashboard() {
 										value={city.id}
 										label={city.name}
 										textTransform="capitalize"
+										_hover={{
+											bg: "blue.50",
+											color: "blue.600"
+										}}
 										onClick={() => {
 											setIsNeedToForecast(true);
 											setSelectedCity(city.id);
@@ -233,13 +279,19 @@ function WeatherDashboard() {
 							</AutoCompleteList>
 						</AutoComplete>
 					</FormControl>
-					<Box position="relative" align={"center"}>
+					
+					<Box position="relative" align={"center"} my={6}>
 						<Text
-							p={2}
+							px={4}
+							py={2}
 							w={"fit-content"}
-							fontWeight="bold"
+							fontWeight="500"
 							align={"center"}
-							bg={"#e3f2fd"}
+							bg={"white"}
+							color="gray.500"
+							fontSize="sm"
+							position="relative"
+							zIndex={1}
 						>
 							or
 						</Text>
@@ -249,32 +301,63 @@ function WeatherDashboard() {
 							left="0"
 							right="0"
 							height="1px"
-							bg="#000000"
-							zIndex="-1"
+							bg="gray.200"
+							zIndex="0"
 						/>
 					</Box>
+					
 					<Button
-						color={"#fff"}
-						bg={"#6c757d"}
-						variant="outline"
-						size="md"
+						w="full"
+						size="lg"
+						bgGradient="linear(135deg, #667eea 0%, #764ba2 100%)"
+						color="white"
+						fontWeight="600"
+						borderRadius="lg"
+						boxShadow="md"
+						_hover={{
+							bgGradient: "linear(135deg, #5a67d8 0%, #6b46c1 100%)",
+							transform: "translateY(-2px)",
+							boxShadow: "lg"
+						}}
+						_active={{
+							transform: "translateY(0)",
+							boxShadow: "md"
+						}}
+						transition="all 0.2s"
 						onClick={() => setIsUsingCurrentLocation(true)}
 					>
-						Use Current Location
+						📍 Use Current Location
 					</Button>
 					{history.length > 0 && (
 						<Box mt={8}>
-							<Text fontSize="lg" fontWeight="bold" mb={2}>
-								History
+							<Text 
+								fontSize="lg" 
+								fontWeight="600" 
+								mb={4}
+								color="gray.700"
+								display="flex"
+								alignItems="center"
+								gap={2}
+							>
+								📅 Search History
 							</Text>
 							<List spacing={3}>
 								{history.map((item, index) => (
 									<ListItem
 										key={index}
-										p={2}
-										bg={"#fff"}
-										borderRadius="md"
-										cursor={"pointer"}
+										p={4}
+										bg="white"
+										borderRadius="lg"
+										border="1px solid"
+										borderColor="gray.100"
+										cursor="pointer"
+										boxShadow="sm"
+										transition="all 0.2s"
+										_hover={{
+											borderColor: "blue.300",
+											boxShadow: "md",
+											transform: "translateY(-1px)"
+										}}
 										onClick={() => {
 											setWeatherData(item);
 											setForecastDaysToShow(
@@ -284,54 +367,65 @@ function WeatherDashboard() {
 											setSelectedCity(item.city);
 										}}
 									>
-										<Text fontWeight="bold">
-											{item.city} ({item.date})
+										<Text fontWeight="600" color="gray.800" mb={2}>
+											🏙️ {item.city} ({item.date})
 										</Text>
-										<Text>
-											Temperature: {item.temperature}
+										<Text fontSize="sm" color="gray.600" mb={1}>
+											🌡️ Temperature: {item.temperature}
 										</Text>
-										<Text>Wind: {item.wind}</Text>
-										<Text>Humidity: {item.humidity}</Text>
+										<Text fontSize="sm" color="gray.600" mb={1}>
+											💨 Wind: {item.wind}
+										</Text>
+										<Text fontSize="sm" color="gray.600">
+											💧 Humidity: {item.humidity}
+										</Text>
 									</ListItem>
 								))}
 							</List>
 						</Box>
 					)}
-				</Flex>
+				</Box>
 
 				<Flex
 					w="full"
 					flexDirection="column"
 					justifyContent="top"
 					p={4}
-					mt={10}
+					mt={[4, 10]}
 				>
 					{Object.keys(weatherData).length !== 0 ? (
 						<>
 							<Box
-								bg="#5372f0"
-								p={6}
+								bgGradient="linear(135deg, #667eea 0%, #764ba2 100%)"
+								p={8}
 								color="white"
-								borderRadius="md"
-								mb={4}
+								borderRadius="2xl"
+								mb={6}
+								boxShadow="xl"
+								border="1px solid"
+								borderColor="whiteAlpha.200"
+								position="relative"
+								overflow="hidden"
 							>
-								<Flex alignItems="center" mb={2}>
+								<Flex alignItems="center" mb={2} position="relative" zIndex={1}>
 									<Flex flexDir={"column"} w="full">
 										<Text
-											fontSize="xl"
-											fontWeight="bold"
+											fontSize={["xl", "2xl"]}
+											fontWeight="700"
 											mr={2}
+											mb={3}
+											textShadow="0 2px 4px rgba(0,0,0,0.2)"
 										>
-											{weatherData.city} (
-											{weatherData.date})
+											🏙️ {weatherData.city} ({weatherData.date})
 										</Text>
-										<Text>
-											Temperature:{" "}
-											{weatherData.temperature}
+										<Text fontSize="lg" mb={2} opacity={0.9}>
+											🌡️ Temperature: {weatherData.temperature}
 										</Text>
-										<Text>Wind: {weatherData.wind}</Text>
-										<Text>
-											Humidity: {weatherData.humidity}
+										<Text fontSize="lg" mb={2} opacity={0.9}>
+											💨 Wind: {weatherData.wind}
+										</Text>
+										<Text fontSize="lg" opacity={0.9}>
+											💧 Humidity: {weatherData.humidity}
 										</Text>
 									</Flex>
 									<Flex
@@ -340,74 +434,182 @@ function WeatherDashboard() {
 										w={"200px"}
 										alignItems="center"
 										justifyContent="center"
+										bg="whiteAlpha.200"
+										borderRadius="xl"
+										p={4}
+										backdropFilter="blur(10px)"
 									>
-										<Image src={weatherData.icon} />
-										<Text ml={2}>Partly Cloudy</Text>
+										<Image src={weatherData.icon} w="80px" h="80px" />
+										<Text ml={2} textAlign="center" fontWeight="500">
+											Partly Cloudy
+										</Text>
 									</Flex>
 								</Flex>
 							</Box>
-							<Text fontSize="lg" fontWeight="bold" mb={2}>
-								{`${forecastDaysToShow}-Day Forecast`}
+							
+							<Text 
+								fontSize={["lg", "xl"]} 
+								fontWeight="600" 
+								mb={4}
+								color="gray.700"
+								display="flex"
+								alignItems="center"
+								gap={2}
+							>
+								📊 {`${forecastDaysToShow}-Day Forecast`}
 							</Text>
-							<Grid templateColumns="repeat(4, 1fr)" gap={[3, 4]}>
+							
+							<Grid templateColumns={["repeat(2, 1fr)", "repeat(4, 1fr)"]} gap={4} mb={6}>
 								{weatherData.forecast.map((forecast, index) => (
 									<GridItem
 										key={index}
-										bg="#6c757d"
-										p={4}
-										borderRadius="md"
-										textAlign="left"
+										bg="white"
+										p={6}
+										borderRadius="xl"
+										textAlign="center"
+										boxShadow="lg"
+										border="1px solid"
+										borderColor="gray.100"
+										transition="all 0.2s"
+										_hover={{
+											transform: "translateY(-4px)",
+											boxShadow: "xl",
+											borderColor: "blue.300"
+										}}
 									>
-										<Text color={"#fff"}>
+										<Text color="gray.700" fontWeight="600" mb={3}>
 											{forecast.date}
 										</Text>
-										<Image src={forecast.icon} />
-										<Text color={"#fff"}>
-											Temp: {forecast.temperature}
+										<Image 
+											src={forecast.icon} 
+											mx="auto" 
+											mb={3}
+											w="60px"
+											h="60px"
+										/>
+										<Text color="gray.600" fontSize="sm" mb={2}>
+											🌡️ {forecast.temperature}
 										</Text>
-										<Text color={"#fff"}>
-											Wind: {forecast.wind}
+										<Text color="gray.600" fontSize="sm" mb={2}>
+											💨 {forecast.wind}
 										</Text>
-										<Text color={"#fff"}>
-											Humidity: {forecast.humidity}
+										<Text color="gray.600" fontSize="sm">
+											💧 {forecast.humidity}
 										</Text>
 									</GridItem>
 								))}
 							</Grid>
+							
 							{showLoadMore && (
 								<Button
 									mt={4}
-									colorScheme="blue"
+									size="lg"
+									bgGradient="linear(135deg, #4299e1 0%, #3182ce 100%)"
+									color="white"
+									fontWeight="600"
+									borderRadius="lg"
+									boxShadow="md"
+									_hover={{
+										bgGradient: "linear(135deg, #3182ce 0%, #2c5282 100%)",
+										transform: "translateY(-2px)",
+										boxShadow: "lg"
+									}}
+									_active={{
+										transform: "translateY(0)",
+										boxShadow: "md"
+									}}
+									transition="all 0.2s"
 									onClick={handleLoadMore}
 								>
-									Load More
+									📈 Load More Forecast
 								</Button>
 							)}
-							<Box mt={8}>
-								<FormControl>
-									<FormLabel>Subscribe for updates</FormLabel>
+							
+							<Box 
+								mt={8} 
+								bg="white" 
+								p={6} 
+								borderRadius="xl" 
+								boxShadow="lg"
+								border="1px solid"
+								borderColor="gray.100"
+							>
+								<Text 
+									fontSize="lg" 
+									fontWeight="600" 
+									mb={4}
+									color="gray.700"
+									display="flex"
+									alignItems="center"
+									gap={2}
+								>
+									📧 Subscribe for Weather Updates
+								</Text>
+								<FormControl mb={4}>
 									<Input
-										w={["full", "300px"]}
-										placeholder="Enter your email"
+										w={["full", "350px"]}
+										placeholder="Enter your email address"
 										value={email}
-										onChange={(e) =>
-											setEmail(e.target.value)
-										}
+										size="lg"
+										borderRadius="lg"
+										border="2px solid"
+										borderColor="gray.200"
+										_hover={{
+											borderColor: "blue.300"
+										}}
+										_focus={{
+											borderColor: "blue.500",
+											boxShadow: "0 0 0 3px rgba(66, 153, 225, 0.1)"
+										}}
+										onChange={(e) => setEmail(e.target.value)}
 									/>
 								</FormControl>
 								<Button
-									mt={4}
-									colorScheme="blue"
+									size="lg"
+									bgGradient="linear(135deg, #48bb78 0%, #38a169 100%)"
+									color="white"
+									fontWeight="600"
+									borderRadius="lg"
+									boxShadow="md"
+									_hover={{
+										bgGradient: "linear(135deg, #38a169 0%, #2f855a 100%)",
+										transform: "translateY(-2px)",
+										boxShadow: "lg"
+									}}
+									_active={{
+										transform: "translateY(0)",
+										boxShadow: "md"
+									}}
+									transition="all 0.2s"
 									onClick={handleSubscription}
 								>
-									Subscribe
+									✉️ Subscribe Now
 								</Button>
 							</Box>
 						</>
 					) : (
-						<Text fontSize="lg" fontWeight="bold" mb={2}>
-							No weather data available
-						</Text>
+						<Box
+							bg="white"
+							p={12}
+							borderRadius="2xl"
+							textAlign="center"
+							boxShadow="lg"
+							border="1px solid"
+							borderColor="gray.100"
+						>
+							<Text fontSize="6xl" mb={4}>🌤️</Text>
+							<Text 
+								fontSize={["lg", "xl"]} 
+								fontWeight="600" 
+								color="gray.600"
+								mb={2}
+							>
+								No weather data available
+							</Text>
+							<Text fontSize="md" color="gray.500">
+								Search for a city above to see the weather forecast
+							</Text>
+						</Box>
 					)}
 				</Flex>
 			</Flex>
